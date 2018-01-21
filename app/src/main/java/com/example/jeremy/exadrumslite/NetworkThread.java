@@ -25,7 +25,7 @@ public class NetworkThread extends Thread
     private AtomicBoolean isRunning = new AtomicBoolean(true);
     private int isWait = 1;
     private boolean waitForReponse = true;
-    private String reply = "Stopped";
+    private String reply = "";
 
     String SendAndReceive(String s)
     {
