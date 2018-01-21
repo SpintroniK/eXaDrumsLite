@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -64,7 +63,7 @@ public class NetworkThread extends Thread
     @Override
     public void run()
     {
-        String serverName = "192.168.1.58";
+        String serverName = "192.168.0.42";
         int port = 8080;
 
         try
