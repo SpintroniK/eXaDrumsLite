@@ -70,7 +70,7 @@ public class NetworkThread extends Thread
     public void run()
     {
 
-        String serverName = (serverIP == "0.0.0.0") ? "10.0.2.2" : serverIP; //192.168.0.42";
+        String serverName = (serverIP.equals("0.0.0.0")) ? "10.0.2.2" : serverIP; //192.168.0.42";
         int port = 8080;
 
         try
