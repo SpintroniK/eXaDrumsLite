@@ -2,6 +2,9 @@ package com.example.jeremy.exadrumslite;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.net.DhcpInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -26,6 +29,7 @@ public class eXaDrums extends Activity implements View.OnClickListener
     Spinner kitsList;
     SeekBar seekBarTempo;
     TextView textViewBpm;
+    String serverIP;
 
     Gson gson = new Gson();
 
@@ -37,6 +41,12 @@ public class eXaDrums extends Activity implements View.OnClickListener
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_e_xa_drums);
+
+        WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        DhcpInfo dhcp = wifi.getDhcpInfo();
+        int addr = dhcp.serverAddress;
+        serverIP = ((addr & 0xFF) + "." + ((addr >>>= 8) & 0xFF) + "." + ((addr >>>= 8) & 0xFF) + "." + ((addr >>>= 8) & 0xFF));
+
 
         //Intialization Button
 
@@ -97,7 +107,7 @@ public class eXaDrums extends Activity implements View.OnClickListener
             }
         });
 
-        networkThread = new NetworkThread();
+        networkThread = new NetworkThread(serverIP);
         //Here MainActivity.this is a Current Class Reference (context)
     }
 

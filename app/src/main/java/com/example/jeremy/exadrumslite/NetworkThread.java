@@ -21,11 +21,17 @@ public class NetworkThread extends Thread
     private Condition responseCondition = responseLock.newCondition();
 
     private String commandMsg;
+    private String serverIP;
 
     private AtomicBoolean isRunning = new AtomicBoolean(true);
     private int isWait = 1;
     private boolean waitForReponse = true;
     private String reply = "";
+
+    NetworkThread(String ipAddress)
+    {
+        serverIP = ipAddress;
+    }
 
     String SendAndReceive(String s)
     {
@@ -63,7 +69,8 @@ public class NetworkThread extends Thread
     @Override
     public void run()
     {
-        String serverName = "192.168.0.42";
+
+        String serverName = (serverIP == "0.0.0.0") ? "10.0.2.2" : serverIP; //192.168.0.42";
         int port = 8080;
 
         try
