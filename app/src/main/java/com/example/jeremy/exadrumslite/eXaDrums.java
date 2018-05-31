@@ -15,9 +15,12 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class eXaDrums extends Activity implements View.OnClickListener
 {
@@ -43,9 +46,9 @@ public class eXaDrums extends Activity implements View.OnClickListener
         setContentView(R.layout.activity_e_xa_drums);
 
         WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        DhcpInfo dhcp = wifi.getDhcpInfo();
+        DhcpInfo dhcp = Objects.requireNonNull(wifi).getDhcpInfo();
         int addr = dhcp.serverAddress;
-        serverIP = ((addr & 0xFF) + "." + ((addr >>>= 8) & 0xFF) + "." + ((addr >>>= 8) & 0xFF) + "." + ((addr >>>= 8) & 0xFF));
+        serverIP = ((addr & 0xFF) + "." + ((addr >> 8) & 0xFF) + "." + ((addr >> 16) & 0xFF) + "." + ((addr >> 24) & 0xFF));
 
 
         //Intialization Button
@@ -95,10 +98,10 @@ public class eXaDrums extends Activity implements View.OnClickListener
                     public void run()
                     {
                         System.out.println("Update Progress " + seekBar.getProgress());
-                        JsonQuery jsonQuery = new JsonQuery();
+                        JsonQuery<Integer> jsonQuery = new JsonQuery<>();
                         jsonQuery.id = 1;
                         jsonQuery.method = "changeTempo";
-                        jsonQuery.params = new ArrayList<Integer>();
+                        jsonQuery.params = new ArrayList<>();
                         jsonQuery.params.add(seekBar.getProgress());
 
                         networkThread.SendAndReceive(gson.toJson(jsonQuery));
@@ -134,7 +137,7 @@ public class eXaDrums extends Activity implements View.OnClickListener
 
                 String reply = networkThread.SendAndReceive(gson.toJson(jsonQuery));
 
-                JsonResult<Boolean> jsonResult = gson.fromJson(reply, JsonResult.class);
+                JsonResult<Boolean> jsonResult = gson.fromJson(reply, new TypeToken<JsonResult<Boolean>>(){}.getType());
 
                 if(!jsonResult.result)
                 {
@@ -147,7 +150,7 @@ public class eXaDrums extends Activity implements View.OnClickListener
                     setText(buttonStart, "Start");
                 }
 
-                reply = networkThread.SendAndReceive(gson.toJson(jsonQuery));
+                networkThread.SendAndReceive(gson.toJson(jsonQuery));
 
                 break;
             }
@@ -162,12 +165,13 @@ public class eXaDrums extends Activity implements View.OnClickListener
                     jsonQuery.params = new ArrayList<Integer>();
 
                     String reply = networkThread.SendAndReceive(gson.toJson(jsonQuery));
-                    JsonResult<Boolean> jsonResult = gson.fromJson(reply, JsonResult.class);
+
+                    JsonResult<Boolean> jsonResult = gson.fromJson(reply, new TypeToken<JsonResult<Boolean>>(){}.getType());
 
                     if(jsonResult.result)
                     {
                         jsonQuery.method = "stop";
-                        reply = networkThread.SendAndReceive(gson.toJson(jsonQuery));
+                        networkThread.SendAndReceive(gson.toJson(jsonQuery));
                     }
 
                     networkThread.Stop();
@@ -187,13 +191,13 @@ public class eXaDrums extends Activity implements View.OnClickListener
             case R.id.toggleMetronome:
             {
 
-                JsonQuery jsonQuery = new JsonQuery();
+                JsonQuery<Boolean> jsonQuery = new JsonQuery<>();
                 jsonQuery.id = 1;
                 jsonQuery.method = "enableMetronome";
-                jsonQuery.params = new ArrayList<Boolean>();
+                jsonQuery.params = new ArrayList<>();
                 jsonQuery.params.add(toggleMetronome.isChecked());
 
-                String reply = networkThread.SendAndReceive(gson.toJson(jsonQuery));
+                networkThread.SendAndReceive(gson.toJson(jsonQuery));
 
                 if(toggleMetronome.isChecked())
                 {

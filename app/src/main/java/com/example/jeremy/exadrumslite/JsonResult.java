@@ -1,7 +1,5 @@
 package com.example.jeremy.exadrumslite;
 
-import java.util.List;
-
 /**
  * Created by jeremy on 29/12/17.
  */

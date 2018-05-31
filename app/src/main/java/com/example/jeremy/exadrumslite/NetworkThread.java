@@ -25,7 +25,7 @@ public class NetworkThread extends Thread
 
     private AtomicBoolean isRunning = new AtomicBoolean(true);
     private int isWait = 1;
-    private boolean waitForReponse = true;
+    private boolean waitForResponse = true;
     private String reply = "";
 
     NetworkThread(String ipAddress)
@@ -115,7 +115,7 @@ public class NetworkThread extends Thread
                 {
                     responseLock.lock();
                     this.reply = response;
-                    waitForReponse = false;
+                    waitForResponse = false;
                     responseCondition.signalAll();
                 }
                 finally
@@ -158,9 +158,9 @@ public class NetworkThread extends Thread
         try
         {
             responseLock.lock();
-            while(waitForReponse) responseCondition.await();
+            while(waitForResponse) responseCondition.await();
             response = this.reply;
-            waitForReponse = true;
+            waitForResponse = true;
         }
         catch (InterruptedException e)
         {
