@@ -45,10 +45,19 @@ public class eXaDrums extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_e_xa_drums);
 
+
         WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         DhcpInfo dhcp = Objects.requireNonNull(wifi).getDhcpInfo();
         int addr = dhcp.serverAddress;
-        serverIP = ((addr & 0xFF) + "." + ((addr >> 8) & 0xFF) + "." + ((addr >> 16) & 0xFF) + "." + ((addr >> 24) & 0xFF));
+
+        if(dhcp.ipAddress != 0)
+        {
+            serverIP = ((addr & 0xFF) + "." + ((addr >> 8) & 0xFF) + "." + ((addr >> 16) & 0xFF) + "." + ((addr >> 24) & 0xFF));
+        }
+        else
+        {
+            serverIP = "0.0.0.0";
+        }
 
 
         //Intialization Button
