@@ -87,8 +87,9 @@
                 android:id="@+id/buttonAbout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
-                android:layout_toStartOf="@+id/buttonQuit"
+                android:layout_marginEnd="176dp"
                 android:text="@string/AboutButtonStr" />
         </RelativeLayout>
 
