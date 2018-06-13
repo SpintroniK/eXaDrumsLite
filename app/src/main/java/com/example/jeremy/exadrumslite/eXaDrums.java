@@ -17,7 +17,6 @@ import android.widget.ToggleButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -73,12 +72,6 @@ public class eXaDrums extends Activity implements View.OnClickListener
 
         kitsList = findViewById(R.id.kitsList);
 
-        List<String> arraySpinner = new ArrayList<>();
-        arraySpinner.add("test");
-        arraySpinner.add("test2");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, arraySpinner);
-        kitsList.setAdapter(adapter);
-
         seekBarTempo = findViewById(R.id.seekBarTempo);
         textViewBpm =  findViewById(R.id.textViewBpm);
 
@@ -108,7 +101,6 @@ public class eXaDrums extends Activity implements View.OnClickListener
                     {
                         System.out.println("Update Progress " + seekBar.getProgress());
                         JsonQuery<Integer> jsonQuery = new JsonQuery<>();
-                        jsonQuery.id = 1;
                         jsonQuery.method = "changeTempo";
                         jsonQuery.params = new ArrayList<>();
                         jsonQuery.params.add(seekBar.getProgress());
@@ -120,18 +112,24 @@ public class eXaDrums extends Activity implements View.OnClickListener
         });
 
         networkThread = new NetworkThread(serverIP);
-        //Here MainActivity.this is a Current Class Reference (context)
+        networkThread.start();
+        networkThreadRunning = true;
+
+        JsonQuery jsonQuery = new JsonQuery();
+        jsonQuery.method = "getKitsNames";
+
+        String reply = networkThread.SendAndReceive(gson.toJson(jsonQuery));
+        JsonResult<List<String>> jsonResult = gson.fromJson(reply, new TypeToken<JsonResult<List<String>>>(){}.getType());
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, jsonResult.result);
+        kitsList.setAdapter(adapter);
+
     }
 
 
     @Override
     public void onClick(View view)
     {
-        if(!networkThreadRunning)
-        {
-            networkThread.start();
-            networkThreadRunning = true;
-        }
 
         // detect the view that was "clicked"
         switch(view.getId())
@@ -140,9 +138,7 @@ public class eXaDrums extends Activity implements View.OnClickListener
             {
 
                 JsonQuery jsonQuery = new JsonQuery();
-                jsonQuery.id = 1;
                 jsonQuery.method = "isStarted";
-                jsonQuery.params = new ArrayList<Integer>();
 
                 String reply = networkThread.SendAndReceive(gson.toJson(jsonQuery));
 
@@ -169,9 +165,7 @@ public class eXaDrums extends Activity implements View.OnClickListener
                 {
 
                     JsonQuery jsonQuery = new JsonQuery();
-                    jsonQuery.id = 1;
                     jsonQuery.method = "isStarted";
-                    jsonQuery.params = new ArrayList<Integer>();
 
                     String reply = networkThread.SendAndReceive(gson.toJson(jsonQuery));
 
@@ -201,7 +195,6 @@ public class eXaDrums extends Activity implements View.OnClickListener
             {
 
                 JsonQuery<Boolean> jsonQuery = new JsonQuery<>();
-                jsonQuery.id = 1;
                 jsonQuery.method = "enableMetronome";
                 jsonQuery.params = new ArrayList<>();
                 jsonQuery.params.add(toggleMetronome.isChecked());
